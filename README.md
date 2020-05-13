@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://www.rust-lang.org/static/images/rust-logo-blk.svg" height="144" width="144" />
-  <h1>rust-webapi</h1>
-  <small>🦀 A Web API written in Rust for learning purposes </small>
+  <h1>icontron</h1>
+  <small>:electron: CLI for building Electron icons from a file</small>
 </div>
 
 ## Icons for each target
