@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://www.rust-lang.org/static/images/rust-logo-blk.svg" height="144" width="144" />
+  <img src="https://raw.githubusercontent.com/estebanborai/icontron/master/assets/test.png" height="150" width="150" />
   <h1>icontron</h1>
   <small>:electron: CLI for building Electron icons from a file</small>
 </div>

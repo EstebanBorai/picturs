@@ -46,6 +46,9 @@ impl Cli {
     let app = self.read();
     let input_file = ImageRef::new(&app.file_path);
 
-    input_file.resize(100);
+    match input_file.resize(1000) {
+      Ok(v) => v,
+      Err(e) => panic!("An error ocurred!\n{}", e),
+    }
   }
 }

@@ -1,6 +1,7 @@
 use std::path::Path;
 use image;
 use image::GenericImageView;
+use image::imageops::FilterType;
 
 use crate::img::Dimensions;
 
@@ -33,9 +34,15 @@ impl<'a> ImageRef<'a> {
     }
   }
 
-  pub fn resize(&self, square_side: u32) {
+  pub fn resize(&self, square_side: u32) -> Result<(), image::error::ImageError> {
     self.validate(square_side);
 
-    println!("{}x{}", self.dimensions.width, self.dimensions.height);
+    let image_file = image::open(self.path).unwrap();
+    let resized = image_file.resize_exact(square_side, square_side, FilterType::Gaussian);
+    let cwd = std::env::current_dir().unwrap().into_os_string().into_string().unwrap();
+    let output_path = format!("{}/result.png", cwd);
+    let target_path = Path::new(&output_path);
+
+    resized.save(target_path)
   }
 }
