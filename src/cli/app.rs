@@ -26,7 +26,7 @@ impl Cli {
 
     let matches = App::new("icontron")
       .version("0.1.0")
-      .author("Esteban Borai <estebanborai@gmail.com> (https://github.com/estebanborai")
+      .author("Esteban Borai <estebanborai@gmail.com> (https://github.com/estebanborai)")
       .arg(
         Arg::with_name("file_path")
           .help("Image file to create the icons from")

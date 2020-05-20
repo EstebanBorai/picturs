@@ -6,11 +6,11 @@
 
 ## Icons for each target
 
-| Target OS  | File   (filename, dimensions)                 |
-| ---------- | --------------------------------------------- |
-| macOS      | `icon.icns` [512x512]                         |
-| Windows    | `icon.ico`  [256x256]                         |
-| Linux      | `icon.png`  [16, 32, 48, 64, 128, 256, 512]   |
+| Target OS  | Output Format | Input File Dimensions (Square) |
+| :----------: | :----------: | :----------: |
+| macOS | `icns` | 512 |
+| Windows | `ico` | 256 |
+| Linux | `png` | 16, 32, 48, 64, 128, 256, 512 |
 
 ## References
 - [electron-builder/icons](https://www.electron.build/icons)
