@@ -1,19 +1,19 @@
 use clap::{App, Arg, ArgMatches};
 use std::vec::Vec;
 use std::path::Path;
-use crate::img::ImageRef;
 use crate::cli::{are_valid_os};
+use crate::icontron::Icontron;
 
 pub struct Cli<'a> {
-  pub file_path: String,
-  pub target: Vec<String>,
+  pub file_path: &'a Path,
   pub output_dir: &'a Path,
+  pub target: Vec<String>,
 }
 
 impl<'a> Cli<'a> {
   /// Creates a new Cli instance
   /// with default values
-  pub fn new(file_path: String, target: Vec<String>, output_dir: &'a Path) -> Self {
+  pub fn new(file_path: &'a Path, target: Vec<String>, output_dir: &'a Path) -> Self {
     Cli {
       file_path,
       target,
@@ -24,12 +24,13 @@ impl<'a> Cli<'a> {
   pub fn start() {
     let matches = Cli::make_cli_and_run();
     let params = Cli::build_from_matches(&matches);
-    let input_file = ImageRef::new(&params.file_path);
-    
-    match input_file.resize(250) {
-      Ok(v) => v,
-      Err(e) => panic!("An error ocurred!\n{}", e),
-    }
+    let icontron = Icontron::new(
+      params.file_path,
+      params.output_dir,
+      params.target
+    );
+
+    icontron.bake();
   }
 
   fn make_cli_and_run() -> ArgMatches<'static> {
@@ -69,12 +70,12 @@ impl<'a> Cli<'a> {
   }
 
   fn build_from_matches(arg_matches: &'a ArgMatches<'a>) -> Self {
-    let file_path: String;
+    let file_path: &Path;
     let input_targets: Vec<String>;
     let output_dir: &Path;
 
     if let Some(file) = arg_matches.value_of("input_file") {
-      file_path = file.to_string();
+      file_path = Path::new(file);
     } else {
       panic!("Missing required paremeter \"file\"!");
     }

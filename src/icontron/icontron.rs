@@ -1,5 +1,10 @@
+use std::error::Error;
 use std::path::Path;
-use crate::cli::Cli;
+use image;
+use image::GenericImageView;
+use image::imageops::FilterType;
+use crate::icontron::{Dimensions, IcontronError};
+use crate::cli::{OS_LINUX, OS_OSX, OS_WINDOWS};
 
 pub struct Icontron<'a> {
   input_file_path: &'a Path,
@@ -19,14 +24,36 @@ impl<'a> Icontron<'a> {
       target_os_list
     }
   }
-}
 
-impl<'a> From<Cli<'a>> for Icontron<'_> {
-  fn from(cli: Cli<'a>) -> Self {
-    Icontron::new(
-      &Path::new(&cli.file_path.clone()),
-      &cli.output_dir,
-      cli.target.clone()
+  pub fn bake(&self) {
+    let image_dimensions: Dimensions = self.get_image_dimensions();
+
+    match self.validate(&image_dimensions) {
+      Ok(_) => {
+        println!("Image is ok!");
+      },
+      Err(err) => {
+        println!("{}", err.message)
+      }
+    }
+  }
+
+  fn get_image_dimensions(&self) -> Dimensions {
+    let image_file = image::open(self.input_file_path).unwrap();
+
+    Dimensions::new(
+      image_file.dimensions().0,
+      image_file.dimensions().1,
     )
+  }
+
+  fn validate(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+    if dim.height != dim.width {
+      return Err(IcontronError::new(
+        &format!("The current file is dimensions are invalid, {}x{}. Expected a 1:1 aspect image", dim.width, dim.height)
+      ));
+    }
+
+    Ok(())
   }
 }
