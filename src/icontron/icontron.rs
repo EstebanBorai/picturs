@@ -54,6 +54,49 @@ impl<'a> Icontron<'a> {
       ));
     }
 
+    if self.target_os_list.iter().any(|os| os == OS_OSX) {
+      self.validate_macos(dim)?;
+    }
+
+    if self.target_os_list.iter().any(|os| os == OS_LINUX) {
+      self.validate_linux(dim)?;
+    }
+
+    if self.target_os_list.iter().any(|os| os == OS_WINDOWS) {
+      self.validate_windows(dim)?;
+    }
+
+    Ok(())
+  }
+
+  fn validate_macos(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+    if dim.width < 512 {
+      return Err(IcontronError::new(
+        &format!("The current file is dimensions are invalid for macOS, {}x{}. Expected a image greather than or equal to 512x512 dimensions image", dim.width, dim.height)
+      ));
+    }
+
+    Ok(())
+  }
+
+  fn validate_linux(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+    if dim.width < 16 {
+      return Err(IcontronError::new(
+        &format!("The current file is dimensions are invalid for Linux, {}x{}. Expected a image greather than 16x16 dimensions image",
+          dim.width, dim.height)
+      ));
+    }
+
+    Ok(())
+  }
+
+  fn validate_windows(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+    if dim.width < 256 {
+      return Err(IcontronError::new(
+        &format!("The current file is dimensions are invalid for macOS, {}x{}. Expected a image greather than or equal to 256x256 dimensions image", dim.width, dim.height)
+      ));
+    }
+
     Ok(())
   }
 }
