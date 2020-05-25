@@ -1,10 +1,13 @@
 use std::error::Error;
 use std::path::Path;
 use image;
-use image::GenericImageView;
-use image::imageops::FilterType;
+use image::{open, RgbImage, ColorType};
+use image::ico::ICOEncoder;
+use image::png::PNGEncoder;
 use crate::icontron::{Dimensions, IcontronError};
 use crate::cli::{OS_LINUX, OS_OSX, OS_WINDOWS};
+use std::fs::File;
+use std::io::BufWriter;
 
 pub struct Icontron<'a> {
   input_file_path: &'a Path,
@@ -26,24 +29,27 @@ impl<'a> Icontron<'a> {
   }
 
   pub fn bake(&self) {
-    let image_dimensions: Dimensions = self.get_image_dimensions();
+    let img = self.load_input_file();
+    let image_dimensions: Dimensions = self.get_image_dimensions(&img);
 
     match self.validate(&image_dimensions) {
       Ok(_) => {
-        println!("Image is ok!");
+        self.build_targets(img);
       },
       Err(err) => {
-        println!("{}", err.message)
+        panic!(err.message);
       }
     }
   }
 
-  fn get_image_dimensions(&self) -> Dimensions {
-    let image_file = image::open(self.input_file_path).unwrap();
+  fn load_input_file(&self) -> RgbImage {
+    open(self.input_file_path).unwrap().into_rgb()
+  }
 
+  fn get_image_dimensions(&self, img: &RgbImage) -> Dimensions {
     Dimensions::new(
-      image_file.dimensions().0,
-      image_file.dimensions().1,
+      img.dimensions().0,
+      img.dimensions().1,
     )
   }
 
@@ -98,5 +104,45 @@ impl<'a> Icontron<'a> {
     }
 
     Ok(())
+  }
+
+  fn build_targets(&self, img: RgbImage) {
+    if self.target_os_list.iter().any(|os| os == OS_WINDOWS) {
+      self.encode_ico(&img);
+    }
+
+    if self.target_os_list.iter().any(|os| os == OS_LINUX) {
+      self.encode_png(&img);
+    }
+
+    if self.target_os_list.iter().any(|os| os == OS_OSX) {
+      self.encode_icns();
+    }
+  }
+
+  fn encode_ico(&self, img: &RgbImage) -> Result<(), IcontronError> {
+    let file = File::create("icon.ico").unwrap();
+    let ref mut buff = BufWriter::new(file);
+    let encoder = ICOEncoder::new(buff);
+
+    match encoder.encode(img, 256, 256, ColorType::Rgb16) {
+      Ok(_) => Ok(()),
+      Err(err) => Err(IcontronError::new(err.description()))
+    }
+  }
+
+  fn encode_png(&self, img: &RgbImage) -> Result<(), IcontronError> {
+    let file = File::create("icon.png").unwrap();
+    let ref mut buff = BufWriter::new(file);
+    let encoder = PNGEncoder::new(buff);
+
+    match encoder.encode(img, 256, 256, ColorType::Rgb16) {
+      Ok(_) => Ok(()),
+      Err(err) => Err(IcontronError::new(err.description()))
+    }
+  }
+
+  fn encode_icns(&self) -> Result<(), IcontronError> {
+    Err(IcontronError::new("ICNS (macOS icon format) is not supported yet!"))
   }
 }
