@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::path::Path;
 use image;
-use image::{open, RgbImage, ColorType};
+use image::{open, RgbImage, ColorType, DynamicImage, GenericImageView};
 use image::ico::ICOEncoder;
 use image::png::PNGEncoder;
 use crate::icontron::{Dimensions, IcontronError};
@@ -29,7 +29,9 @@ impl<'a> Icontron<'a> {
   }
 
   pub fn bake(&self) {
-    let img = self.load_input_file();
+    let loaded_file = self.load_input_file();
+    let img: DynamicImage = loaded_file;
+
     let image_dimensions: Dimensions = self.get_image_dimensions(&img);
 
     match self.validate(&image_dimensions) {
@@ -42,11 +44,11 @@ impl<'a> Icontron<'a> {
     }
   }
 
-  fn load_input_file(&self) -> RgbImage {
-    open(self.input_file_path).unwrap().into_rgb()
+  fn load_input_file(&self) -> DynamicImage {
+    open(self.input_file_path).unwrap()
   }
 
-  fn get_image_dimensions(&self, img: &RgbImage) -> Dimensions {
+  fn get_image_dimensions(&self, img: &DynamicImage) -> Dimensions {
     Dimensions::new(
       img.dimensions().0,
       img.dimensions().1,
@@ -106,7 +108,7 @@ impl<'a> Icontron<'a> {
     Ok(())
   }
 
-  fn build_targets(&self, img: RgbImage) {
+  fn build_targets(&self, img: DynamicImage) {
     if self.target_os_list.iter().any(|os| os == OS_WINDOWS) {
       self.encode_ico(&img);
     }
@@ -120,23 +122,23 @@ impl<'a> Icontron<'a> {
     }
   }
 
-  fn encode_ico(&self, img: &RgbImage) -> Result<(), IcontronError> {
+  fn encode_ico(&self, img: &DynamicImage) -> Result<(), IcontronError> {
     let file = File::create("icon.ico").unwrap();
     let ref mut buff = BufWriter::new(file);
     let encoder = ICOEncoder::new(buff);
 
-    match encoder.encode(img, 256, 256, ColorType::Rgb16) {
+    match encoder.encode(&img.to_bytes(), 256, 256, img.color()) {
       Ok(_) => Ok(()),
       Err(err) => Err(IcontronError::new(err.description()))
     }
   }
 
-  fn encode_png(&self, img: &RgbImage) -> Result<(), IcontronError> {
+  fn encode_png(&self, img: &DynamicImage) -> Result<(), IcontronError> {
     let file = File::create("icon.png").unwrap();
     let ref mut buff = BufWriter::new(file);
     let encoder = PNGEncoder::new(buff);
 
-    match encoder.encode(img, 256, 256, ColorType::Rgb16) {
+    match encoder.encode(&img.to_bytes(), 256, 256, img.color()) {
       Ok(_) => Ok(()),
       Err(err) => Err(IcontronError::new(err.description()))
     }
