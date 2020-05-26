@@ -24,9 +24,11 @@ OPTIONS:
 
 | Target OS  | Output Format | Input File Dimensions (Square) |
 | ---------- | ---------- | ---------- |
-| macOS | `icns` | 512 |
+| ⚠️ macOS | `icns` | 512 |
 | Windows | `ico` | 256 |
 | Linux | `png` | 256 |
+
+> ⚠️ Not supported yet
 
 ## References
 - [electron-builder/icons](https://www.electron.build/icons)
