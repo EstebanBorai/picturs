@@ -2,6 +2,7 @@ use std::error::Error;
 use std::path::Path;
 use image;
 use image::{open, RgbImage, ColorType, DynamicImage, GenericImageView};
+use image::imageops::FilterType;
 use image::ico::ICOEncoder;
 use image::png::PNGEncoder;
 use crate::icontron::{Dimensions, IcontronError};
@@ -123,22 +124,34 @@ impl<'a> Icontron<'a> {
   }
 
   fn encode_ico(&self, img: &DynamicImage) -> Result<(), IcontronError> {
+    if img.dimensions().0 != 256 {
+      let resized = img.resize_exact(256, 256, FilterType::Gaussian);
+
+      return self.encode_ico(&resized);
+    }
+
     let file = File::create("icon.ico").unwrap();
     let ref mut buff = BufWriter::new(file);
     let encoder = ICOEncoder::new(buff);
 
-    match encoder.encode(&img.to_bytes(), 256, 256, img.color()) {
+    match encoder.encode(&img.to_bytes(), img.dimensions().0, img.dimensions().1, img.color()) {
       Ok(_) => Ok(()),
       Err(err) => Err(IcontronError::new(err.description()))
     }
   }
 
   fn encode_png(&self, img: &DynamicImage) -> Result<(), IcontronError> {
+    if img.dimensions().0 != 256 {
+      let resized = img.resize_exact(256, 256, FilterType::Gaussian);
+
+      return self.encode_png(&resized);
+    }
+
     let file = File::create("icon.png").unwrap();
     let ref mut buff = BufWriter::new(file);
     let encoder = PNGEncoder::new(buff);
 
-    match encoder.encode(&img.to_bytes(), 256, 256, img.color()) {
+    match encoder.encode(&img.to_bytes(), img.dimensions().0, img.dimensions().1, img.color()) {
       Ok(_) => Ok(()),
       Err(err) => Err(IcontronError::new(err.description()))
     }
