@@ -1,10 +1,11 @@
-pub struct IcontronError {
+/// Iconize runtime error representation
+pub struct IconizeError {
   pub message: String,
 }
 
-impl IcontronError {
+impl IconizeError {
   pub fn new(message: &str) -> Self {
-    IcontronError {
+    IconizeError {
       message: String::from(message)
     }
   }

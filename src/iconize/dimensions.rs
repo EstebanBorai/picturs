@@ -1,3 +1,5 @@
+/// Dimensions represents the dimensions of an
+/// image file
 pub struct Dimensions {
   pub height: u32,
   pub width: u32,

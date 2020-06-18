@@ -5,30 +5,36 @@ use image::{open, RgbImage, ColorType, DynamicImage, GenericImageView};
 use image::imageops::FilterType;
 use image::ico::ICOEncoder;
 use image::png::PNGEncoder;
-use crate::icontron::{Dimensions, IcontronError};
+use crate::iconize::{Dimensions, IconizeError};
 use crate::cli::{OS_LINUX, OS_OSX, OS_WINDOWS};
 use std::fs::File;
 use std::io::BufWriter;
 
-pub struct Icontron<'a> {
+/// Iconize creates icons files from the provided input
+/// `input_file_path`, and writes them in the provided `output_dir`.
+pub struct Iconize<'a> {
   input_file_path: &'a Path,
   output_dir: &'a Path,
   target_os_list: Vec<String>,
 }
 
-impl<'a> Icontron<'a> {
+impl<'a> Iconize<'a> {
   pub fn new(
     input_file_path: &'a Path,
     output_dir: &'a Path,
     target_os_list: Vec<String>
   ) -> Self {
-    Icontron {
+    Iconize {
       input_file_path,
       output_dir,
       target_os_list
     }
   }
 
+  /// Encodes the `input_file_path` file into
+  /// the `target_os_list` files and writes them.
+  /// If the provided file is not valid for its target
+  /// panics.
   pub fn bake(&self) {
     let loaded_file = self.load_input_file();
     let img: DynamicImage = loaded_file;
@@ -45,10 +51,14 @@ impl<'a> Icontron<'a> {
     }
   }
 
+  /// Returns a DynamicImage for the provided
+  /// file.
   fn load_input_file(&self) -> DynamicImage {
     open(self.input_file_path).unwrap()
   }
 
+  /// Gathers the DynamicImage dimensions, returning
+  /// a `Dimensions` instance
   fn get_image_dimensions(&self, img: &DynamicImage) -> Dimensions {
     Dimensions::new(
       img.dimensions().0,
@@ -56,9 +66,11 @@ impl<'a> Icontron<'a> {
     )
   }
 
-  fn validate(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+  /// Validate the provided file dimensions borrowing a `Dimensions`
+  /// instance for the provided files
+  fn validate(&self, dim: &'a Dimensions) -> Result<(), IconizeError> {
     if dim.height != dim.width {
-      return Err(IcontronError::new(
+      return Err(IconizeError::new(
         &format!("The current file is dimensions are invalid, {}x{}. Expected a 1:1 aspect image", dim.width, dim.height)
       ));
     }
@@ -78,9 +90,10 @@ impl<'a> Icontron<'a> {
     Ok(())
   }
 
-  fn validate_macos(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+  /// Validates the borrowed `Dimensions` for a MacOS icon file
+  fn validate_macos(&self, dim: &'a Dimensions) -> Result<(), IconizeError> {
     if dim.width < 512 {
-      return Err(IcontronError::new(
+      return Err(IconizeError::new(
         &format!("The current file is dimensions are invalid for macOS, {}x{}. Expected a image greather than or equal to 512x512 dimensions image", dim.width, dim.height)
       ));
     }
@@ -88,9 +101,10 @@ impl<'a> Icontron<'a> {
     Ok(())
   }
 
-  fn validate_linux(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+  /// Validates the borrowed `Dimensions` for a Linux icon file
+  fn validate_linux(&self, dim: &'a Dimensions) -> Result<(), IconizeError> {
     if dim.width < 16 {
-      return Err(IcontronError::new(
+      return Err(IconizeError::new(
         &format!("The current file is dimensions are invalid for Linux, {}x{}. Expected a image greather than 16x16 dimensions image",
           dim.width, dim.height)
       ));
@@ -99,9 +113,10 @@ impl<'a> Icontron<'a> {
     Ok(())
   }
 
-  fn validate_windows(&self, dim: &'a Dimensions) -> Result<(), IcontronError> {
+  /// Validates the borrowed `Dimensions` for a Windows icon file
+  fn validate_windows(&self, dim: &'a Dimensions) -> Result<(), IconizeError> {
     if dim.width < 256 {
-      return Err(IcontronError::new(
+      return Err(IconizeError::new(
         &format!("The current file is dimensions are invalid for macOS, {}x{}. Expected a image greather than or equal to 256x256 dimensions image", dim.width, dim.height)
       ));
     }
@@ -109,6 +124,7 @@ impl<'a> Icontron<'a> {
     Ok(())
   }
 
+  /// Encode each of the provided targets
   fn build_targets(&self, img: DynamicImage) {
     if self.target_os_list.iter().any(|os| os == OS_WINDOWS) {
       self.encode_ico(&img);
@@ -123,7 +139,8 @@ impl<'a> Icontron<'a> {
     }
   }
 
-  fn encode_ico(&self, img: &DynamicImage) -> Result<(), IcontronError> {
+  /// Encode an ICO file
+  fn encode_ico(&self, img: &DynamicImage) -> Result<(), IconizeError> {
     if img.dimensions().0 != 256 {
       let resized = img.resize_exact(256, 256, FilterType::Gaussian);
 
@@ -136,11 +153,12 @@ impl<'a> Icontron<'a> {
 
     match encoder.encode(&img.to_bytes(), img.dimensions().0, img.dimensions().1, img.color()) {
       Ok(_) => Ok(()),
-      Err(err) => Err(IcontronError::new(err.description()))
+      Err(err) => Err(IconizeError::new(err.description()))
     }
   }
 
-  fn encode_png(&self, img: &DynamicImage) -> Result<(), IcontronError> {
+  /// Encode a PNG file
+  fn encode_png(&self, img: &DynamicImage) -> Result<(), IconizeError> {
     if img.dimensions().0 != 256 {
       let resized = img.resize_exact(256, 256, FilterType::Gaussian);
 
@@ -153,11 +171,12 @@ impl<'a> Icontron<'a> {
 
     match encoder.encode(&img.to_bytes(), img.dimensions().0, img.dimensions().1, img.color()) {
       Ok(_) => Ok(()),
-      Err(err) => Err(IcontronError::new(err.description()))
+      Err(err) => Err(IconizeError::new(err.description()))
     }
   }
 
-  fn encode_icns(&self) -> Result<(), IcontronError> {
-    Err(IcontronError::new("ICNS (macOS icon format) is not supported yet!"))
+  /// Encode an ICNS file
+  fn encode_icns(&self) -> Result<(), IconizeError> {
+    Err(IconizeError::new("ICNS (macOS icon format) is not supported yet!"))
   }
 }

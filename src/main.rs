@@ -1,5 +1,5 @@
 mod cli;
-mod icontron;
+mod iconize;
 
 fn main() {
   cli::Cli::start();

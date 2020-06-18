@@ -2,8 +2,13 @@ use clap::{App, Arg, ArgMatches};
 use std::vec::Vec;
 use std::path::Path;
 use crate::cli::{are_valid_os};
-use crate::icontron::Icontron;
+use crate::iconize::Iconize;
 
+/// Represents a *clap* instance
+/// with custom state, focused on iconize requirements.
+/// 
+/// The Cli struct will validate and make use of the input
+/// data to create an Iconize instance.
 pub struct Cli<'a> {
   pub file_path: &'a Path,
   pub output_dir: &'a Path,
@@ -24,17 +29,17 @@ impl<'a> Cli<'a> {
   pub fn start() {
     let matches = Cli::make_cli_and_run();
     let params = Cli::build_from_matches(&matches);
-    let icontron = Icontron::new(
+    let iconize = Iconize::new(
       params.file_path,
       params.output_dir,
       params.target
     );
 
-    icontron.bake();
+    iconize.bake();
   }
 
   fn make_cli_and_run() -> ArgMatches<'static> {
-    let app = App::new("icontron")
+    let app = App::new("iconize")
       .version("0.1.0")
       .author("Esteban Borai <estebanborai@gmail.com> (https://github.com/estebanborai)")
       .arg(
@@ -69,6 +74,7 @@ impl<'a> Cli<'a> {
       app.get_matches()
   }
 
+  /// Builds Cli instance from the provided *clap* ArgMatches
   fn build_from_matches(arg_matches: &'a ArgMatches<'a>) -> Self {
     let file_path: &Path;
     let input_targets: Vec<String>;
@@ -95,6 +101,8 @@ impl<'a> Cli<'a> {
     Cli::new(file_path, input_targets, output_dir)
   }
 
+  /// Retrieves a vector of `Strings` containing all
+  /// the provided matches from the user
   fn parse_targets(input_target_string: &str) -> Vec<String> {
     let mut targets: Vec<String> = Vec::new();
 
@@ -107,6 +115,8 @@ impl<'a> Cli<'a> {
     return targets;
   }
 
+  /// Creates a vector of String containing all
+  /// the available targets to build icons for
   fn make_target_list_all() -> Vec<String> {
     vec!(
       "osx".to_string(),

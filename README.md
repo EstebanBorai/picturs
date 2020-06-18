@@ -1,15 +1,18 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/estebanborai/icontron/master/assets/test.png" height="150" width="150" />
-  <h1>icontron</h1>
-  <small>:electron: CLI for building Electron icons from a file</small>
+  <img src="https://raw.githubusercontent.com/estebanborai/iconize/master/assets/test.png" height="150" width="150" />
+  <h1>iconize</h1>
+  <small>CLI utility for building multiplatform icons</small>
 </div>
 
+## Capabilies
+Iconize is a CLI capable of generate icon sets for MacOS, Linux and Windows.
+
 ```
-icontron 0.1.0
+iconize 0.1.0
 Esteban Borai <estebanborai@gmail.com> (https://github.com/estebanborai)
 
 USAGE:
-    icontron [OPTIONS] --file <FILE>
+    iconize [OPTIONS] --file <FILE>
 
 FLAGS:
     -h, --help       Prints help information
@@ -17,6 +20,7 @@ FLAGS:
 
 OPTIONS:
     -f, --file <FILE>                  Image file to create the icons from
+    -o, --output <OUTPUT_DIRECTORY>    Path to directory where files will be written
     -t, --target <TARGET_LIST>         Target OS icon files
 ```
 

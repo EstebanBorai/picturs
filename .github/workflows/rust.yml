@@ -22,5 +22,5 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: icontron
+        name: iconize
         path: target/release

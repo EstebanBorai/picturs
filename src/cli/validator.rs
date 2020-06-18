@@ -1,5 +1,7 @@
 use crate::cli::{OS_LINUX, OS_OSX, OS_WINDOWS};
 
+/// Validate target String to have a valid value and also valid
+/// OS names
 pub fn are_valid_os(os_list: String) -> Result<(), String> {
   let values: Vec<String> = os_list.split(',').map(|s| s.to_string()).collect();
 
