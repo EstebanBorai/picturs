@@ -8,4 +8,5 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33.1"
+icns = "0.3.1"
 image = "0.23.4"

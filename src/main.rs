@@ -1,6 +1,8 @@
 mod cli;
-mod iconize;
+mod error;
+mod files;
+mod img;
 
 fn main() {
-  cli::Cli::start();
+  cli::run();
 }
