@@ -1,4 +1,5 @@
 /// Iconize runtime error representation
+#[derive(Debug)]
 pub struct IconizeError {
   pub message: String,
 }

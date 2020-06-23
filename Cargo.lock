@@ -169,10 +169,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icns"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5ccfbad7e08da70a5b48a924994a5afd93125ce5d45a3b0ba0b8da7bda59a40"
+dependencies = [
+ "byteorder",
+ "png",
+]
+
+[[package]]
 name = "iconize"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "icns",
  "image",
 ]
 

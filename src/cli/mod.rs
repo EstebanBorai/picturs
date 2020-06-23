@@ -1,7 +1,5 @@
-mod app;
-mod validator;
-mod constants;
+mod cli;
+mod validators;
 
-pub use app::Cli;
-pub use validator::*;
-pub use constants::*;
+pub use cli::{run, Targets};
+pub use validators::is_valid_target;
