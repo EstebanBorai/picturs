@@ -1,11 +1,11 @@
 name: Clippy Check
 
 on:
-  - push:
-      branches:
-        - master
+  push:
+    branches:
+      - master
 
-  - pull_request
+  pull_request
 
 jobs:
   clippy_check:

@@ -4,6 +4,8 @@
   <small>CLI utility for building multiplatform icons</small>
 </div>
 
+## Description
+
 **iconize** is a CLI utility that resizes and encode image files for multiple platforms, such
 as MacOS, Linux and Windows.
 
@@ -12,7 +14,7 @@ as MacOS, Linux and Windows.
 `iconize [OPTIONS] <input_file> --target <target>`
 
 The only argument required is the `input_file` which should be a valid image file. Specs
-about the [File Requirements]().
+about the [File Requirements](https://github.com/estebanborai/iconize#file-requirements).
 
 ### Options
 
