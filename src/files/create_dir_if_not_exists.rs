@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::fs::create_dir;
+use std::path::Path;
 
 /// Create a directory if not exists, otherwise does nothing
 pub fn create_dir_if_not_exists(dir_path: String) {

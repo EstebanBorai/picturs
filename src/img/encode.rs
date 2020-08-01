@@ -1,20 +1,22 @@
-use std::fs::File;
-use std::error::Error;
-use std::io::{BufReader, BufWriter};
-use image;
-use image::ico::ICOEncoder;
-use image::imageops::FilterType;
-use image::png::PNGEncoder;
-use image::{DynamicImage, GenericImageView};
-use image::io::Reader;
-use icns::{IconFamily, IconType, Image};
 use crate::cli::Targets;
 use crate::error::IconizeError;
 use crate::files::create_dir_if_not_exists;
+use icns::{IconFamily, IconType, Image};
+use image;
+use image::ico::ICOEncoder;
+use image::imageops::FilterType;
+use image::io::Reader;
+use image::png::PNGEncoder;
+use image::{DynamicImage, GenericImageView};
+use std::error::Error;
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
 
 pub fn encode_from_cli_args(input_file_path: String, targets: Targets, output_directory: String) {
-  let image_file = Reader::open(input_file_path.clone()).expect("Unable to read image file")
-    .decode().expect("Unable to decode image file");
+  let image_file = Reader::open(input_file_path.clone())
+    .expect("Unable to read image file")
+    .decode()
+    .expect("Unable to decode image file");
 
   if targets.iter().any(|t| t == "windows") {
     encode_ico(&image_file, output_directory.clone()).expect("Unable to encode into an ICO file");
@@ -25,7 +27,8 @@ pub fn encode_from_cli_args(input_file_path: String, targets: Targets, output_di
   }
 
   if targets.iter().any(|t| t == "macos") {
-    encode_icns(input_file_path.clone(), output_directory.clone()).expect("Unable to encode into ICNS file");
+    encode_icns(input_file_path.clone(), output_directory.clone())
+      .expect("Unable to encode into ICNS file");
   }
 }
 
@@ -99,6 +102,6 @@ fn encode_icns(input_file_path: String, output_directory: String) -> Result<(), 
   let out = BufWriter::new(File::create(format!("{}/icon.icns", file_dirname)).unwrap());
   match icon_family.write(out) {
     Ok(_) => Ok(()),
-    Err(err) => Err(IconizeError::new(&err.to_string()))
+    Err(err) => Err(IconizeError::new(&err.to_string())),
   }
 }

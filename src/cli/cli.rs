@@ -1,9 +1,9 @@
+use crate::cli::is_valid_target;
+use crate::files::create_dir_if_not_exists;
+use crate::img::encode_from_cli_args;
+use clap::{App, Arg};
 use std::fs;
 use std::path::Path;
-use clap::{App, Arg};
-use crate::cli::is_valid_target;
-use crate::img::encode_from_cli_args;
-use crate::files::create_dir_if_not_exists;
 
 const INPUT_FILE: &str = "input_file";
 const TARGET: &str = "target";
@@ -23,7 +23,7 @@ pub fn run() {
         .help("File used to generate icons from")
         .takes_value(true)
         .value_name(INPUT_FILE)
-        .required(true)
+        .required(true),
     )
     .arg(
       Arg::with_name(TARGET)
@@ -33,7 +33,7 @@ pub fn run() {
         .long(TARGET)
         .value_name(TARGET)
         .required(true)
-        .validator(is_valid_target)
+        .validator(is_valid_target),
     )
     .arg(
       Arg::with_name(OUTPUT_PATH)
@@ -42,7 +42,7 @@ pub fn run() {
         .short("o")
         .long(OUTPUT_PATH)
         .value_name(OUTPUT_PATH)
-        .required(false)
+        .required(false),
     );
 
   let matches = app.get_matches();
@@ -50,7 +50,7 @@ pub fn run() {
   build_from_args(
     matches.value_of(INPUT_FILE).unwrap().to_string(),
     get_targets(matches.value_of(TARGET).unwrap().to_string()),
-    get_output_path(matches.value_of(OUTPUT_PATH))
+    get_output_path(matches.value_of(OUTPUT_PATH)),
   );
 }
 
@@ -58,7 +58,11 @@ fn get_targets(target_list: String) -> Targets {
   if target_list == String::default() {
     // if no target is defines from the CLI
     // use all targets
-    return vec!("macos".to_string(), "linux".to_string(), "windows".to_string());
+    return vec![
+      "macos".to_string(),
+      "linux".to_string(),
+      "windows".to_string(),
+    ];
   }
 
   target_list.split(",").map(|str| str.to_string()).collect()
@@ -67,7 +71,7 @@ fn get_targets(target_list: String) -> Targets {
 fn get_output_path(output_path: Option<&str>) -> String {
   let final_path = match output_path {
     Some(path_str) => path_str.to_string(),
-    _ => Path::new("./icons").to_str().unwrap().to_string()
+    _ => Path::new("./icons").to_str().unwrap().to_string(),
   };
 
   // check if the provided path is available

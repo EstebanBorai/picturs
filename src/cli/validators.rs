@@ -5,7 +5,9 @@ pub fn is_valid_target(os_list: String) -> Result<(), String> {
 
   for os in values.iter() {
     if os != "macos" && os != "linux" && os != "windows" {
-      return Err(String::from("Provided target (s) are invalid. Valid targets are macos, linux, windows"));
+      return Err(String::from(
+        "Provided target (s) are invalid. Valid targets are macos, linux, windows",
+      ));
     }
   }
 

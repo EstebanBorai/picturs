@@ -7,7 +7,7 @@ pub struct IconizeError {
 impl IconizeError {
   pub fn new(message: &str) -> Self {
     IconizeError {
-      message: String::from(message)
+      message: String::from(message),
     }
   }
 }

@@ -7,9 +7,6 @@ pub struct Dimensions {
 
 impl Dimensions {
   pub fn new(width: u32, height: u32) -> Self {
-    Dimensions {
-      height,
-      width
-    }
+    Dimensions { height, width }
   }
 }
