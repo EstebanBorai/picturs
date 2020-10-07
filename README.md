@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/EstebanBorai/picturs/main/assets/test.png" height="150" width="150" />
   <h1>picturs</h1>
-  <small>Command-line utility to manipulate image files</small>
+  <span>Command-line utility to manipulate image files</span>
 </div>
 
 ## Description
