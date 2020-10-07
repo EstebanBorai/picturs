@@ -1,7 +1,7 @@
 use crate::cli::is_valid_target;
 use crate::files::create_dir_if_not_exists;
 use crate::img::encode_from_cli_args;
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 use std::fs;
 use std::path::Path;
 
@@ -15,9 +15,9 @@ pub type Targets = Vec<String>;
 /// then gather matches from the instance during the
 /// CLI execution
 pub fn run() {
-  let app = App::new("iconize")
-    .version("0.1.0")
-    .author("Esteban Borai <estebanborai@gmail.com> (https://github.com/estebanborai)")
+  let app = App::new("picturs")
+    .version(crate_version!())
+    .author("Esteban Borai <estebanborai@gmail.com> (https://github.com/EstebanBorai)")
     .arg(
       Arg::with_name(INPUT_FILE)
         .help("File used to generate icons from")

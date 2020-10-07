@@ -1,6 +1,6 @@
 [package]
-name = "iconize"
-version = "0.1.0"
+name = "picturs"
+version = "0.0.0"
 authors = ["Esteban Borai <estebanborai@gmail.com>"]
 edition = "2018"
 

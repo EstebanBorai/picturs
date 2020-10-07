@@ -1,5 +1,5 @@
 use crate::cli::Targets;
-use crate::error::IconizeError;
+use crate::error::pictursError;
 use crate::files::create_dir_if_not_exists;
 use icns::{IconFamily, IconType, Image};
 use image;
@@ -33,7 +33,7 @@ pub fn encode_from_cli_args(input_file_path: String, targets: Targets, output_di
 }
 
 /// Encode an ICO file
-fn encode_ico(img: &DynamicImage, output_directory: String) -> Result<(), IconizeError> {
+fn encode_ico(img: &DynamicImage, output_directory: String) -> Result<(), pictursError> {
   if img.dimensions().0 != 256 {
     let resized = img.resize_exact(256, 256, FilterType::Gaussian);
 
@@ -55,12 +55,12 @@ fn encode_ico(img: &DynamicImage, output_directory: String) -> Result<(), Iconiz
     img.color(),
   ) {
     Ok(_) => Ok(()),
-    Err(err) => Err(IconizeError::new(&err.to_string())),
+    Err(err) => Err(pictursError::new(&err.to_string())),
   }
 }
 
 /// Encode a PNG file
-fn encode_png(img: &DynamicImage, output_directory: String) -> Result<(), IconizeError> {
+fn encode_png(img: &DynamicImage, output_directory: String) -> Result<(), pictursError> {
   if img.dimensions().0 != 256 {
     let resized = img.resize_exact(256, 256, FilterType::Gaussian);
 
@@ -82,12 +82,12 @@ fn encode_png(img: &DynamicImage, output_directory: String) -> Result<(), Iconiz
     img.color(),
   ) {
     Ok(_) => Ok(()),
-    Err(err) => Err(IconizeError::new(&err.to_string())),
+    Err(err) => Err(pictursError::new(&err.to_string())),
   }
 }
 
 /// Encode an ICNS file
-fn encode_icns(input_file_path: String, output_directory: String) -> Result<(), IconizeError> {
+fn encode_icns(input_file_path: String, output_directory: String) -> Result<(), pictursError> {
   // create new ICNS family
   let mut icon_family = IconFamily::new();
   let file = BufReader::new(File::open(input_file_path.clone()).unwrap());
@@ -102,6 +102,6 @@ fn encode_icns(input_file_path: String, output_directory: String) -> Result<(), 
   let out = BufWriter::new(File::create(format!("{}/icon.icns", file_dirname)).unwrap());
   match icon_family.write(out) {
     Ok(_) => Ok(()),
-    Err(err) => Err(IconizeError::new(&err.to_string())),
+    Err(err) => Err(pictursError::new(&err.to_string())),
   }
 }

@@ -1,12 +1,12 @@
-/// Iconize runtime error representation
+/// picturs runtime error representation
 #[derive(Debug)]
-pub struct IconizeError {
+pub struct pictursError {
   pub message: String,
 }
 
-impl IconizeError {
+impl pictursError {
   pub fn new(message: &str) -> Self {
-    IconizeError {
+    pictursError {
       message: String::from(message),
     }
   }

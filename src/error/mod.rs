@@ -1,3 +1,3 @@
 mod error;
 
-pub use error::IconizeError;
+pub use error::pictursError;
